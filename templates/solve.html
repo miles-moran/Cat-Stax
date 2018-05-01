@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="https://fonts.googleapis.com/css?family=Do+Hyeon" rel="stylesheet"> 
+        <style>
+            body {
+                font-family: 'Do Hyeon', sans-serif;
+            }
+            .shapes {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+            }
+            #square {
+                display: inline-block;
+                width: 1em; 
+                height: 1em; 
+                background: black; 
+                margin: 0em;
+            }
+            #null {
+                display: inline-block;
+                width: 1em; 
+                height: 1em; 
+                margin: 0em;
+                opacity: 100%
+            }
+            .shape_num   {
+                border-radius: 1em;
+                padding: .15em;
+                
+            }
+            .top {
+                display: grid;
+                grid-template-columns: 1fr 5fr;
+            }
+            a {
+                text-decoration: none;
+                color: black;
+            }
+            a:hover {
+                color: red;
+            }
+            .path {
+                font-family: arial;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="top">
+            <div class="canvas">
+                <h1>Canvas</h1>
+                {% for row in canvas_output %}
+                    <div>
+                    {% for block in row %}
+                        {% if block == True %}
+                        <span id="square"></span>  
+                        {% else %}
+                        <span id="null"></span>  
+                        {% endif %}
+                    {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="data">
+                <span class="title"><a href="/solver"><h1>Solutions</a><h1></h1></span>
+                {% if solution_output %}
+                    {% for row in solution_output %}
+                        <div>
+                        {% for block in row %}
+                            {% if block == None %}
+                            <span id="null"></span>  
+                            {% else %}
+                            <span id="square" style="background-color: {{block}}"></span>  
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="shapes">
+            {% for i in range(0, shapes_output|length) %}  
+                <div class="shape">
+                <h1>Shape <span class="shape_num" style="color: {{colors[i]}}">{{i+1}}</span></h1>
+                {% for permutation in shapes_output[i] %}
+                    <div>
+                    {% for row in permutation %}
+                        <div>
+                        {% for block in row %}
+                            {% if block == True %}
+                            <span id="square" style="background-color: {{colors[i]}}" ></span>  
+                            {% else %}
+                            <span id="null"></span>  
+                            {% endif %}   
+                        {% endfor %}
+                        </div>
+                    {% endfor %}
+                    <br></div>
+                {% endfor %}
+                </div> 
+            {% endfor %}
+        </div>
+        <h4>Paths</h4>
+        {% for path in paths %}
+            <span class="path">{{path}}</span>
+        {% endfor %}
+
+        {% for item in test %}
+            <div>{{item}}</div>
+        {% endfor %}
+
+        {% for item in error %}
+            <div>{{item}}</div>
+        {% endfor %}
+    </body>
+</html>
+ 
+{{continue}}

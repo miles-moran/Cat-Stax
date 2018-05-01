@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .container {
+                margin: 20em 20em 0 40em;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <form action="shape_dimensions">
+                <h1>Shape {{counter}} Dimensions</h1>
+                <div>Height: <input type="text" name="height"></div>
+                <div>Width: <input type="text" name="width"></div>
+                <div><input type="submit"></div>
+                <div><input type="hidden" name="counter" value={{counter}}></div>
+                <div><input type="hidden" name="shape_count" value={{shape_count}}></div>
+            </form>
+        </div>
+    </body>
+</html>
+ 

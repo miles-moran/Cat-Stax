@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .container {
+                margin: 20em 20em 0 40em;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <form action="canvas">
+                <div>
+                    <h1>Canvas</h1> 
+                    {% for i in range(0, height) %}
+                        <div>
+                            {% for j in range(0, width) %}
+                                <input type="checkbox" name="{{j}}-{{i}}" checked>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <input type="submit">
+                <input type="hidden" name="height" value={{height}}>
+                <input type="hidden" name="width" value={{width}}>
+                <input type="hidden" name="shape_count" value={{shape_count}}>
+            </form>
+        </div>
+    </body>
+</html>
+ 
