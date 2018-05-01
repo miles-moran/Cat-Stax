@@ -257,7 +257,6 @@ def solver():
     colors = []
     for shape in shapes_list:
         colors.append(shape.color)
-    test.append("<hr>")
     canvas = canvas_list[0]
     path = []
     for canvas_point in canvas.points:
@@ -272,15 +271,15 @@ def solver():
                     for permutation in shape.permutations:
                         #return str(canvas_fit(canvas, permutation, canvas_point))
                         if canvas_fit(canvas, permutation, canvas_point, shape.color) == False:
-                            message = "|" + str(shape.number) + "." + str(permutation.permutation) + "|" + " - MISS - |" + str(canvas_point) + "|<br>"
+                            message = "|" + str(shape.number) + "." + str(permutation.permutation) + "|" + " - MISS - |" + str(canvas_point) + "|"
                             test.append(message)
                             shape.clear()
                             for point in canvas.points:
-                                if point.occupant == shape.number:
+                                if point.occupant == permutation.number:
                                     point.occupant = None
                                     point.color = None
                         else:
-                            message = "|" + str(shape.number) + "." + str(permutation.permutation) + "|" + " - HIT - |" + str(canvas_point) + "|<br>"
+                            message = "|" + str(shape.number) + "." + str(permutation.permutation) + "|" + " - HIT - |" + str(canvas_point) + "|"
                             test.append(message)
                             fit = True
                         if fit == True:
@@ -299,24 +298,6 @@ def solver():
                     pass
         if len(shape_path) != 0:
             paths.append(shape_path)
-    counter = 0
-    test.append("<hr>")
-    for canvas_point in canvas.points:
-        if canvas_point.occupant != None:
-            message = str(canvas_point.occupant)
-        else:
-            message = str("0")
-        test.append(message)
-        counter = counter + 1
-        if counter == canvas.width:
-            test.append("<br>")
-            counter = 0
-    test.append("<hr>")
-    for shape in shapes_list:
-        message = str(shape) + "-" + str(shape.number) + "<br>"
-        test.append(message)
-        message = str(shape.location) + "-" + str(shape.number) + "<br>"
-        test.append(message)
 
     #return str(test) + str(error)
     owned = True
@@ -347,12 +328,11 @@ def canvas_fit(canvas, shape, origin, color): #returns a True or False
                     canvas_point.occupant = shape.number
                     canvas_point.color = color
                     count = count + 1
-                    test.append("x")
-                    error.append(str(shape.location))
-                    message = str(shape.location[i]) + "---" + str(canvas_point) + "---" +str(shape.number) + "." + str(shape.permutation) + "PASS<br>" 
+                    message = str(shape.location[i]) + "---" + str(canvas_point) + "---" +str(shape.number) + "." + str(shape.permutation) + "PASS" 
                     error.append(message)
+                    break
                 else:
-                    message = str(shape.location[i]) + "---" + str(canvas_point) + "---" +str(shape.number) + "." + str(shape.permutation) + "FAIL<br>"
+                    message = str(shape.location[i]) + "---" + str(canvas_point) + "---" +str(shape.number) + "." + str(shape.permutation) + "FAIL"
                     error.append(message)
     if count == shape.mass:
         return True
