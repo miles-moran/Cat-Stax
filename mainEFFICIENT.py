@@ -1,7 +1,8 @@
-from flask import Flask, request, redirect, render_template
 import cgi
 import random
 from itertools import permutations
+
+from flask import Flask, redirect, render_template, request
 
 app = Flask(__name__)
 app.config['DEBUG'] = True  
@@ -14,7 +15,7 @@ error = []
 solved = []
 paths = []
 count = [0]
-positions = []
+position_list = []
 
 class Point():
     def __init__(self, x, y):
@@ -251,20 +252,176 @@ def shape_shaper():
 
 @app.route('/solve', methods=['GET', 'POST'])
 def solve():
-    shape_sorter(shapes_list)
     colors = []
     for shape in shapes_list:
         colors.append(shape.color)
     return render_template('solve.html', canvas=canvas, canvas_output=canvas_output(), shapes_output=shape_output(), colors=colors)
 
 @app.route('/solver', methods=['GET', 'POST'])
-def solver():
+def positions():
+    canvas=canvas_list[0]
+    count = []
     for shape in shapes_list:
-        for permutations in shape.permutations:
-            
+        shape_positions = []
+        for permutation in shape.permutations:
+            for canvas_point in canvas.points:
+                if place(permutation, canvas_point) != None:
+                    shape_positions.append(place(permutation, canvas_point))
+        position_list.append(shape_positions)
+
+    solution = sift()
+    assignments = assign(solution)
+    assigned_canvas = Canvas(canvas_list[0].width, canvas_list[0].height, assignments, canvas_list[0].area, canvas_list[0].shape_count)
+    solution_out = solution_output(assigned_canvas)
+    
+    #p = []
+    #for point in assignments:
+    #   p.append(point.color)
+
+    
+    #shape_output = shape_output(assign(solutions))
+    
+    #return render_template("test.html", p = p, solution = solution)
+    colors = []
+    for shape in shapes_list:
+        colors.append(shape.color)
+    return render_template('solve.html', canvas=canvas, canvas_output=canvas_output(), shapes_output=shape_output(), colors=colors, solution_output=solution_out)
+
+
+def assign(solution): #returns a list of points with occupants
+    assigned_points = []
+    for point in canvas_list[0].points:
+        for i in range(0, len(solution)):
+            for j in range(0, len(solution[i])):
+                if str(solution[i][j]) == str(point):
+                    new_point = point
+                    new_point.color = shapes_list[i].color
+                    assigned_points.append(new_point)
+    return assigned_points
+    
+
+
+def sift(): #I need this to start checking for collisions every time a shape is placed
+    for position0 in position_list[0]:
+        all_positions = [position0]
+        collision_check = collisions(all_positions)
+        if len(position_list) == 1: 
+            if collision_check == False:
+                return all_positions
+        else:
+            if collision_check == True:
+                pass
+            else: 
+                for position1 in position_list[1]:
+                    all_positions = [position0, position1]
+                    collision_check = collisions(all_positions)
+                    if len(position_list) == 2: 
+                        if collision_check == False:
+                            return all_positions
+                    else:
+                        if collision_check == True:
+                            pass
+                        else:
+                            for position2 in position_list[2]:
+                                all_positions = [position0, position1, position2]
+                                collision_check = collisions(all_positions)
+                                if len(position_list) == 3: 
+                                    if collision_check == False:
+                                        return all_positions
+                                else:
+                                    if collision_check == True:
+                                        pass
+                                    else:
+                                        for position3 in position_list[3]:
+                                            all_positions = [position0, position1, position2, position3]
+                                            collision_check = collisions(all_positions)
+                                            if len(position_list) == 4: 
+                                                if collision_check == False:
+                                                    return all_positions
+                                            else:
+                                                if collision_check == True:
+                                                    pass
+                                                else:
+                                                    for position4 in position_list[4]:
+                                                        all_positions = [position0, position1, position2, position3, position4]
+                                                        collision_check = collisions(all_positions)
+                                                        if len(position_list) == 5: 
+                                                            if collision_check == False:
+                                                                return all_positions
+                                                        else:
+                                                            if collision_check == True:
+                                                                pass
+                                                            else:
+                                                                for position5 in position_list[5]:
+                                                                    all_positions = [position0, position1, position2, position3, position4, position5]
+                                                                    collision_check = collisions(all_positions)
+                                                                    if len(position_list) == 6: 
+                                                                        if collision_check == False:
+                                                                            return all_positions
+                                                                    else:
+                                                                        if collision_check == True:
+                                                                            pass
+                                                                        else:
+                                                                            for position6 in position_list[6]:
+                                                                                all_positions = [position0, position1, position2, position3, position4, position5, position6]
+                                                                                collision_check = collisions(all_positions)
+                                                                                if len(position_list) == 7: 
+                                                                                    if collision_check == False:
+                                                                                        return all_positions
+                                                                                else:
+                                                                                    if collision_check == True:
+                                                                                        pass
+                                                                                    else:
+                                                                                        for position7 in position_list[7]:
+                                                                                            all_positions = [position0, position1, position2, position3, position4, position5, position6, position7]
+                                                                                            collision_check = collisions(all_positions)
+                                                                                            if len(position_list) == 8: 
+                                                                                                if collision_check == False:
+                                                                                                    return all_positions
+                                                                                            else:
+                                                                                                if collision_check == True:
+                                                                                                    pass
+                                                                                                else:
+                                                                                                    pass
+
+               
+
+def collisions(all_positions):
+    point_array = []
+    for p in all_positions:
+        point_array = point_array + p
+    for p in range(0, len(point_array)):
+        point_array[p] = str(point_array[p])
+    for point in point_array:
+        if point_array.count(str(point)) > 1:
+            return True
+
+    return False
+
+
+    #return position_list[0][0][0] to reach a point.
+
+def place(shape, point): #return a list of points if valid, returns none if it cannot fit within the canvas
+    new_position = []
+    canvas = canvas_list[0]
+    for i in range(0, len(shape.points)):
+        x = shape.points[i].x + (point.x - shape.points[0].x)
+        y = shape.points[i].y + (point.y - shape.points[0].y)
+
+        new_point = Point(x, y)
+
+        inbounds = False
+        for canvas_point in canvas.points:
+            if str(canvas_point) == str(new_point):
+                inbounds = True
+        if inbounds == False:
+            return None
         
+        new_position.append(new_point)
 
+    return sorter(new_position)
 
+    
 
 
 
@@ -379,7 +536,7 @@ def shape_output():
     return shapes_output
 
 def canvas_output():
-    canvas=canvas_list[0]
+    canvas = canvas_list[0]
     canvas_output = []
     for i in range (0, canvas.height):
         row = []
@@ -396,8 +553,8 @@ def canvas_output():
                 row.append(False)
         canvas_output.append(row)
     return canvas_output
-def solution_output():
-    canvas=canvas_list[0]
+
+def solution_output(canvas):
     solution_output = []
     for i in range (0, canvas.height):
         row = []
@@ -415,13 +572,5 @@ def solution_output():
         solution_output.append(row)
     return solution_output
 
-def shake(s_list):
-    #we have a counter. that counts number of attempts.
-    #we have a list. 
-    l = list(permutations(s_list))
-    j = count[0]
-    return l[j]
-
 if __name__ == "__main__":
     app.run()
-
